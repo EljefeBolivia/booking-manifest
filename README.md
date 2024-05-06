@@ -1,5 +1,5 @@
-# Booking Trip Sheet
+# Booking Manifest
 
-Automatic generation of booking trip sheets for Gravity Nelson NZ
+Automatic generation of booking manifests for Gravity Nelson NZ
 
-Copyright (c) 2024, Alistair Matthew
+Copyright (c) 2024, Karin and Alistair Matthew

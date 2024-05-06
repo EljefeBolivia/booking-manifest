@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <head>
+    <title>Gravity Nelson NZ - Booking Trip Sheet Generator</title>
+    <link rel="icon" href="./main_images/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+
+    <!-- <script src="./libraries/xlsx.full.min.js"></script> -->
+    <script defer type="text/javascript" src="./scripts.js"></script>
+  </head>
+
+  <body>
+    <header id="header">
+      <br />
+      <img src="./images/gravity_nelson_logo.png" />
+      <h1>Gravity Nelson NZ</h1>
+      <h2>Booking Manifest Generator</h2>
+      <br />
+      <button id="generate-manifest-button">Generate Manifest</button>
+    </header>
+    <br />
+
+    <main id="manifest-container">
+      <table id="manifest">
+        <thead>
+          <tr>
+            <th
+              colspan="24"
+              id="manifest-title"
+              class="manifest-color border-right"
+            >
+              COACHING/GUIDING TRIP SHEET
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="12" class="manifest-field">Location:</td>
+            <td colspan="6" class="manifest-field">Date:</td>
+            <td colspan="6" class="manifest-field border-right">Time:</td>
+          </tr>
+
+          <tr>
+            <td colspan="12" class="manifest-field">Meeting Point:</td>
+            <td colspan="12" class="manifest-field border-right">
+              Coach / Assistant:
+            </td>
+          </tr>
+
+          <tr>
+            <td
+              colspan="24"
+              class="manifest-color manifest-subtitle border-right"
+            >
+              Customer Information
+            </td>
+          </tr>
+
+          <!-- <tr>
+            <td colspan="6" class="manifest-subtitle">NAME</td>
+            <td colspan="6" class="manifest-subtitle">PHONE</td>
+            <td colspan="6" class="manifest-subtitle">EMAIL</td>
+            <td colspan="2" class="manifest-subtitle">NMTBC</td>
+            <td colspan="2" class="manifest-subtitle">PAID</td>
+            <td colspan="2" class="manifest-subtitle border-right">WAIVER</td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="6" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field"></td>
+            <td colspan="2" class="manifest-field border-right"></td>
+          </tr> -->
+
+          <tr>
+            <td
+              colspan="24"
+              class="manifest-color manifest-subtitle border-right"
+            >
+              Booking Information
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="12" class="manifest-field">Number of people:</td>
+            <td colspan="12" class="manifest-field">Topic:</td>
+          </tr>
+
+          <tr>
+            <td colspan="12" class="manifest-field">Public or private:</td>
+            <td colspan="12" class="manifest-field">Rental bike:</td>
+          </tr>
+
+          <tr>
+            <td colspan="12" class="manifest-field">Weather forecast:</td>
+            <td colspan="12" class="manifest-field">Track conditions:</td>
+          </tr>
+
+          <tr>
+            <td colspan="6" class="manifest-field">Ok to do current plan:</td>
+            <td colspan="18" class="manifest-field">Yes / If not</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <br />
+    <button id="print-manifest-button">Print Manifest</button>
+  </body>
+</html>

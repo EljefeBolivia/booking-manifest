@@ -1,0 +1,78 @@
+/* start of general styling */
+
+body {
+  font-family: Arial, Helvetica, sans-serif; /* fallback */
+  background-color: #f9fafb;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+table {
+  border-spacing: 0;
+}
+
+/* end of general styling */
+
+/* start of landing page styling */
+
+#header {
+  text-align: center;
+}
+
+#generate-manifest-button {
+  font-size: 24px;
+}
+
+/* end of landing page styling */
+
+/* start of manifest styling */
+
+th,
+td {
+  border-left: 2px solid black;
+  border-top: 2px solid black;
+  height: 40px;
+}
+
+.border-right {
+  border-right: 2px solid black;
+}
+
+.border-bottom {
+  border-bottom: 2px solid black;
+}
+
+#manifest {
+  width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.manifest-color {
+  background-color: #8c1a11;
+  color: white;
+}
+
+#manifest-title {
+  font-size: 28px;
+}
+
+.manifest-subtitle {
+  font-size: 22px;
+  text-align: center;
+}
+
+.manifest-field {
+  font-size: 18px;
+}
+
+/* end of manifest styling */
