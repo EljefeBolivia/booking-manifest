@@ -4,7 +4,7 @@ const main = () => {
   );
 
   if (generateManifestButton) {
-    generateManifestButton.onclick = fillOutManifest;
+    generateManifestButton.onclick = generateManifest;
   }
 
   const printManifestButton = document.getElementById("print-manifest-button");
@@ -14,21 +14,24 @@ const main = () => {
   }
 };
 
-const fillOutManifest = () => {
-  console.log("TODO");
+const generateManifest = async () => {
+  const manifestTemplate = await retrieveManifestTemplate();
+  const manifest = fillOutManifest(manifestTemplate, "");
+  printManifest(manifest);
 };
 
-const printManifest = () => {
+const retrieveManifestTemplate = async () => {
+  return await fetch("template_coaching.html").then((html) => html.text());
+};
+
+const fillOutManifest = (manifestTemplate, manifestContent) => {
+  return manifestTemplate;
+};
+
+const printManifest = (manifest) => {
   const printWindow = window.open("", "_blank");
-
-  const manifest = document.getElementById("manifest");
-  printWindow.document.write(
-    '<html><head><title>Print it!</title><link rel="stylesheet" type="text/css" href="../styles.css"></head><body>'
-  );
-  printWindow.document.write(manifest.outerHTML);
-  printWindow.document.write("</body></html>");
+  printWindow.document.write(manifest);
   printWindow.print();
-
   printWindow.close();
 };
 
