@@ -3,12 +3,15 @@ const main = () => {
     "generate-manifest-button"
   );
 
-  //   generateManifestButton.onclick = generateTripSheet;
-  generateManifestButton.onclick = fillOutManifest;
+  if (generateManifestButton) {
+    generateManifestButton.onclick = fillOutManifest;
+  }
 
   const printManifestButton = document.getElementById("print-manifest-button");
 
-  printManifestButton.onclick = printManifest;
+  if (printManifestButton) {
+    printManifestButton.onclick = printManifest;
+  }
 };
 
 const fillOutManifest = () => {
@@ -20,7 +23,7 @@ const printManifest = () => {
 
   const manifest = document.getElementById("manifest");
   printWindow.document.write(
-    '<html><head><title>Print it!</title><link rel="stylesheet" type="text/css" href="./styles.css"></head><body>'
+    '<html><head><title>Print it!</title><link rel="stylesheet" type="text/css" href="../styles.css"></head><body>'
   );
   printWindow.document.write(manifest.outerHTML);
   printWindow.document.write("</body></html>");
