@@ -1,0 +1,23 @@
+{
+  "date": "03/01/2024",
+  "location": "Field of Dreams",
+  "time": "10am - 1pm",
+  "meeting_point": "Field of Dreams",
+  "coach": "",
+  "customers": [
+    {
+      "name": "A**** W*******",
+      "phone": "+61 *********",
+      "email": "*******@*****",
+      "nmtbc": true,
+      "paid": "FareHarbor",
+      "waiver": "FareHarbor"
+    }
+  ],
+  "booking_information": {
+    "number_of_people": 1,
+    "topic": "Drops and Jumps",
+    "is_private_lesson": true,
+    "rental_bike": ""
+  }
+}

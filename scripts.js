@@ -3,54 +3,156 @@ const main = () => {
     "generate-manifest-button"
   );
 
-  if (generateManifestButton) {
-    generateManifestButton.onclick = generateManifest;
-  }
-
-  const printManifestButton = document.getElementById("print-manifest-button");
-
-  if (printManifestButton) {
-    printManifestButton.onclick = printManifest;
-  }
+  generateManifestButton.onclick = generateManifest;
 };
 
 const generateManifest = async () => {
-  const manifestTemplate = await retrieveManifestTemplate();
-  const manifest = fillOutManifest(manifestTemplate, "");
-  printManifest(manifest);
-};
+  const manifestTemplate = await getManifestTemplate();
+  const booking = await getBooking();
 
-const retrieveManifestTemplate = async () => {
-  return await fetch("template_coaching.html").then((html) => html.text());
-};
-
-const fillOutManifest = (manifestTemplate, manifestContent) => {
-  return manifestTemplate;
-};
-
-const printManifest = (manifest) => {
-  const printWindow = window.open("", "_blank");
-  printWindow.document.write(manifest);
+  const printWindow = fillOutManifestForPrint(manifestTemplate, booking);
   printWindow.print();
   printWindow.close();
 };
 
-// const generateTripSheet = () => {
-//   const data = [[]];
-//   const worksheet = XLSX.utils.aoa_to_sheet(data);
+const getManifestTemplate = async () => {
+  return await fetch("template_coaching.html").then((response) =>
+    response.text()
+  );
+};
 
-//   // s: start, e: end, r: row, c: column
-//   const cellMerges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+// TODO: use actual data
+const getBooking = async () => {
+  return await fetch("mock_booking_1.json").then((response) => response.json());
+};
 
-//   worksheet["!merges"] = cellMerges;
+const fillOutManifestForPrint = (manifestTemplate, booking) => {
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(manifestTemplate);
 
-//   createWorkbook(worksheet);
-// };
+  appendTextInElement(printWindow, "date", booking.date);
+  appendTextInElement(printWindow, "location", booking.location);
+  appendTextInElement(printWindow, "time", booking.time);
 
-// const createWorkbook = (worksheet) => {
-//   const workbook = XLSX.utils.book_new(worksheet, "worksheet_TODO_name");
-//   const filename = "booking_trip_sheet_TODO_name.xlsx";
-//   XLSX.writeFileXLSX(workbook, filename, { compression: true });
-// };
+  appendTextInElement(printWindow, "meeting-point", booking["meeting_point"]);
+  appendTextInElement(printWindow, "coach", booking.coach);
+
+  fillOutCustomerInformation(printWindow, booking.customers);
+
+  const bookingInformation = booking["booking_information"];
+
+  appendTextInElement(
+    printWindow,
+    "number-of-people",
+    bookingInformation["number_of_people"]
+  );
+  appendTextInElement(printWindow, "topic", bookingInformation.topic);
+
+  appendTextInElement(
+    printWindow,
+    "public-or-private",
+    bookingInformation["is_private_lesson"] ? "private" : "public"
+  );
+  appendTextInElement(
+    printWindow,
+    "rental-bike",
+    bookingInformation["rental_bike"]
+  );
+
+  return printWindow;
+};
+
+const appendTextInElement = (printWindow, elementId, text) => {
+  const element = printWindow.document.getElementById(elementId);
+  element.innerText = element.innerText + " " + text;
+};
+
+const fillOutCustomerInformation = (printWindow, customers) => {
+  const customerInfoSection = printWindow.document.getElementById(
+    "customer-information"
+  );
+
+  for (const customer of customers) {
+    const customerRow = createCustomerRow(customer);
+    customerInfoSection.innerHTML = customerInfoSection.innerHTML + customerRow;
+  }
+
+  const maxNumberOfCustomers = 10;
+  const remainingNumberOfRows = maxNumberOfCustomers - customers.length;
+
+  for (let index = 0; index < remainingNumberOfRows; ++index) {
+    const blankCustomerRow = createBlankCustomerRow();
+    customerInfoSection.innerHTML =
+      customerInfoSection.innerHTML + blankCustomerRow;
+  }
+};
+
+const createCustomerRow = (customer) => {
+  return `
+  <div class="manifest-row">
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    ${customer.name}
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    ${customer.phone}
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    ${customer.email}
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
+    >
+    ${customer.nmtbc ? "yes" : "no"}
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
+    >
+    ${customer.paid}
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left border-right"
+    >
+    ${customer.waiver}
+    </div>
+  </div>
+  `;
+};
+
+const createBlankCustomerRow = () => {
+  return `
+  <div class="manifest-row">
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left"
+    >
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
+    >
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
+    >
+    </div>
+    <div
+      class="manifest-cell manifest-field center-text twenty-percent-width border-top border-left border-right"
+    >
+    </div>
+  </div>
+  `;
+};
 
 main(); // program is ran here
