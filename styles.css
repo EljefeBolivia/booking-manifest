@@ -1,9 +1,15 @@
+/* font */
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* font */
+
 /* start of general styling */
 
 body {
   print-color-adjust: exact;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #f9fafb;
+  background-color: white;
   margin: 0;
 }
 
@@ -25,20 +31,30 @@ table {
 
 /* start of landing page styling */
 
-#header {
+#landing-page {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#header-logo {
+  margin-top: 40px;
+  width: 320px;
 }
 
 #generate-manifest-button {
-  font-size: 24px;
-}
-
-#footer {
-  text-align: center;
-}
-
-#print-manifest-button {
-  font-size: 24px;
+  margin-top: 40px;
+  border-radius: 8px;
+  border: 2px solid #231f21;
+  background-color: #e48f3e;
+  color: #231f21;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 6px 12px;
 }
 
 /* end of landing page styling */
