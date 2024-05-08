@@ -136,6 +136,16 @@ table {
 
 /* start of manifest-specific styling */
 
+.coaching-color {
+  background-color: #8c1a11;
+  color: white;
+}
+
+.shuttle-color {
+  background-color: #719898;
+  color: white;
+}
+
 .manifest-page {
   width: 1024px;
   margin-left: auto;
@@ -150,18 +160,14 @@ table {
   height: 40px;
 }
 
-.manifest-color {
-  background-color: #8c1a11;
-  color: white;
-}
-
 .manifest-title {
   font-size: 28px;
+  font-weight: 600;
 }
 
 .manifest-subtitle {
   font-size: 22px;
-  text-align: center;
+  font-weight: 400;
 }
 
 .manifest-field {
