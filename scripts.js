@@ -11,8 +11,14 @@ const generateManifest = async () => {
   const booking = await getBooking();
 
   const printWindow = fillOutManifestForPrint(manifestTemplate, booking);
+  await delay(50);
+
   printWindow.print();
   printWindow.close();
+};
+
+const delay = (milliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
 const getManifestTemplate = async () => {
@@ -27,7 +33,7 @@ const getBooking = async () => {
 };
 
 const fillOutManifestForPrint = (manifestTemplate, booking) => {
-  const printWindow = window.open("", "_blank");
+  const printWindow = window.open("");
   printWindow.document.write(manifestTemplate);
 
   appendTextInElement(printWindow, "date", booking.date);
