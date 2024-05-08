@@ -72,15 +72,18 @@ const fillOutCustomerInformation = (printWindow, customers) => {
     "customer-information"
   );
 
-  for (const customer of customers) {
+  const maxNumRows = 10;
+  const numRowsToFill = Math.min(customers.length, maxNumRows);
+
+  for (let index = 0; index < numRowsToFill; ++index) {
+    const customer = customers[index];
     const customerRow = createCustomerRow(customer);
     customerInfoSection.innerHTML = customerInfoSection.innerHTML + customerRow;
   }
 
-  const maxNumberOfCustomers = 10;
-  const remainingNumberOfRows = maxNumberOfCustomers - customers.length;
+  const numBlankRows = maxNumRows - numRowsToFill;
 
-  for (let index = 0; index < remainingNumberOfRows; ++index) {
+  for (let index = 0; index < numBlankRows; ++index) {
     const blankCustomerRow = createBlankCustomerRow();
     customerInfoSection.innerHTML =
       customerInfoSection.innerHTML + blankCustomerRow;
