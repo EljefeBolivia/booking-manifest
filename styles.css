@@ -29,6 +29,38 @@ table {
 
 /* end of general styling */
 
+/* start of loader styling */
+
+#loader {
+  z-index: 2;
+  position: absolute;
+  top: calc(50% - 1rem);
+  left: calc(50% - 1rem);
+  width: 2rem;
+  height: 2rem;
+  border: 5px solid #f3f3f3;
+  border-top: 6px solid #e48f3e;
+  border-radius: 100%;
+  margin: auto;
+  visibility: hidden;
+  animation: spin 1s infinite linear;
+}
+
+#loader.display {
+  visibility: visible;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* end of loader styling */
+
 /* start of landing page styling */
 
 #landing-page {
@@ -40,12 +72,11 @@ table {
 }
 
 #header-logo {
-  margin-top: 40px;
+  margin: 40px auto;
   width: 320px;
 }
 
 #generate-manifest-button {
-  margin-top: 40px;
   border-radius: 8px;
   border: 2px solid #231f21;
   background-color: #e48f3e;
@@ -99,6 +130,10 @@ table {
 
 .quarter-width {
   width: 25%;
+}
+
+.thirty-percent-width {
+  width: 30%;
 }
 
 .twenty-percent-width {

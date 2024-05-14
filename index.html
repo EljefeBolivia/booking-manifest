@@ -8,13 +8,26 @@
     <title>Gravity Nelson NZ - Booking Manifest Generator</title>
     <link rel="icon" href="./favicon.ico" />
     <link rel="stylesheet" type="text/css" href="./styles.css" />
+
     <script defer type="text/javascript" src="./scripts.js"></script>
   </head>
 
   <body>
     <main id="landing-page">
+      <div id="loader"></div>
       <img id="header-logo" src="./images/gravity_nelson_logo_text.webp" />
-      <button id="generate-manifest-button">GENERATE MANIFEST</button>
+
+      <div>
+        <label for="fareharbor-manifest">FareHarbor Manifest: </label>
+        <input id="fareharbor-manifest" type="file" />
+        <br />
+        <br />
+        <label for="openai-api-key">OpenAI API Key: </label>
+        <input id="openai-api-key" type="text" />
+        <br />
+        <br />
+        <button id="generate-manifest-button">GENERATE MANIFEST</button>
+      </div>
     </main>
   </body>
 </html>

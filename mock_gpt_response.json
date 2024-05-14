@@ -1,0 +1,9 @@
+{
+  "choices": [
+    {
+      "message": {
+        "content": "{\n \"booking_date\": \"03/01/2024\",\n \"booking_time\": \"10 am - 1 pm\",\n \"is_at_field_of_dreams\": true,\n \"customers\": [\n {\n \"name\": \"A**** W*******\",\n \"phone\": \"61*******64\",\n \"email\": \"b********@yahoo.com.au\",\n \"is_nelson_mtb_club_member\": true,\n \"paid\": true,\n \"is_waiver_signed\": true\n }\n ],\n \"is_private_session\": true,\n \"number_of_people\": 1,\n \"topic_preference\": \"Drops and Jumps\",\n \"need_to_rent_bike\": false\n}"
+      }
+    }
+  ]
+}
