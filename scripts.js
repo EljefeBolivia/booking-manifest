@@ -17,7 +17,6 @@ const generateManifest = async () => {
 
   const apiKeyInput = document.getElementById("openai-api-key");
   const apiKey = apiKeyInput.value;
-  console.log("API key: " + apiKey);
 
   if (!fareharborManifest || !apiKey) {
     return;
@@ -57,7 +56,7 @@ const createHeadersForGPT = (apiKey) => {
 
 const createPayloadForGPT = (base64Image) => {
   return {
-    model: "gpt-4-turbo",
+    model: "gpt-4o",
     messages: [
       {
         role: "user",
@@ -122,10 +121,10 @@ const sendRequestToGPT = async (apiKey, payload) => {
     body: JSON.stringify(payload),
   };
 
-  const response = await fetch(gptURL, requestOptions);
   // const response = await fetch("mock_gpt_response.json");
+  const response = await fetch(gptURL, requestOptions);
 
-  console.log("received response from GPT: " + response);
+  console.log("received response from GPT");
   return await response.json();
 };
 
@@ -137,14 +136,12 @@ const extractBookingInformation = (gptResponse) => {
 
 const showLoader = () => {
   console.log("showing loader");
-
   const loader = document.getElementById("loader");
   loader.classList.add("display");
 };
 
 const hideLoader = () => {
   console.log("hiding loader");
-
   const loader = document.getElementById("loader");
   loader.classList.remove("display");
 };
