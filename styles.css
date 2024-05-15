@@ -34,12 +34,10 @@ table {
 #loader {
   z-index: 2;
   position: absolute;
-  top: calc(50% - 1rem);
-  left: calc(50% - 1rem);
-  width: 2rem;
-  height: 2rem;
-  border: 5px solid #f3f3f3;
-  border-top: 6px solid #e48f3e;
+  top: calc(50% - 2rem);
+  left: calc(50% - 2rem);
+  width: 4rem;
+  height: 4rem;
   border-radius: 100%;
   margin: auto;
   visibility: hidden;
@@ -56,6 +54,31 @@ table {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+#loader-background {
+  z-index: 1;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #e48f3e50;
+  visibility: hidden;
+  animation: 0.5s fade-in;
+}
+
+#loader-background.display {
+  visibility: visible;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

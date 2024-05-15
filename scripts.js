@@ -181,12 +181,16 @@ const showLoader = () => {
   console.log("showing loader");
   const loader = document.getElementById("loader");
   loader.classList.add("display");
+  const loaderBackground = document.getElementById("loader-background");
+  loaderBackground.classList.add("display");
 };
 
 const hideLoader = () => {
   console.log("hiding loader");
   const loader = document.getElementById("loader");
   loader.classList.remove("display");
+  const loaderBackground = document.getElementById("loader-background");
+  loaderBackground.classList.remove("display");
 };
 
 const delay = (milliseconds) => {
