@@ -1,5 +1,8 @@
 const main = () => {
   console.log("starting main");
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://mozilla.github.io/pdf.js/build/pdf.worker.mjs";
+
   const generateManifestButton = document.getElementById(
     "generate-manifest-button"
   );
@@ -13,23 +16,55 @@ const generateManifest = async () => {
   const fareharborManifestInput = document.getElementById(
     "fareharbor-manifest"
   );
-  const fareharborManifest = fareharborManifestInput.files[0];
+  const fareharborManifestFile = fareharborManifestInput.files[0];
 
   const apiKeyInput = document.getElementById("openai-api-key");
   const apiKey = apiKeyInput.value;
 
-  if (!fareharborManifest || !apiKey) {
+  if (!fareharborManifestFile || !apiKey) {
     return;
   }
 
-  const fileReader = new FileReader();
-  fileReader.onload = async () =>
-    await readImageWithGPT(fileReader.result, apiKey);
+  if (fareharborManifestFile) {
+    console.log("converting FareHarbor manifest from PDF to PNG in base64");
+    const fareharborManifestImage = await convertPDFToImage(
+      fareharborManifestFile
+    );
 
-  if (fareharborManifest) {
-    console.log("encoding FareHarbor manifest in base64");
-    fileReader.readAsDataURL(fareharborManifest);
+    await readImageWithGPT(fareharborManifestImage, apiKey);
+
+    // if input manifest as PNG:
+    //
+    // const fileReader = new FileReader();
+    // fileReader.onload = async () =>
+    //   await readImageWithGPT(fileReader.result, apiKey);
+    //
+    // console.log("encoding FareHarbor manifest in base64");
+    // fileReader.readAsDataURL(fareharborManifestImage);
   }
+};
+
+const convertPDFToImage = async (pdfFile) => {
+  const pdfURL = URL.createObjectURL(pdfFile);
+
+  const loadingTask = pdfjsLib.getDocument(pdfURL);
+  const loadedPDF = await loadingTask.promise;
+
+  const firstPage = await loadedPDF.getPage(1);
+  var pdfViewport = firstPage.getViewport({ scale: 1 });
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  canvas.height = pdfViewport.height;
+  canvas.width = pdfViewport.width;
+
+  const task = firstPage.render({
+    canvasContext: context,
+    viewport: pdfViewport,
+  });
+  await task.promise;
+
+  return canvas.toDataURL();
 };
 
 const readImageWithGPT = async (base64Image, apiKey) => {

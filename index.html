@@ -8,7 +8,8 @@
     <title>Gravity Nelson NZ - Booking Manifest Generator</title>
     <link rel="icon" href="./favicon.ico" />
     <link rel="stylesheet" type="text/css" href="./styles.css" />
-
+    
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
     <script defer type="text/javascript" src="./scripts.js"></script>
   </head>
 
@@ -19,7 +20,7 @@
 
       <div>
         <label for="fareharbor-manifest">FareHarbor Manifest: </label>
-        <input id="fareharbor-manifest" type="file" />
+        <input id="fareharbor-manifest" type="file" accept="application/pdf" />
         <br />
         <br />
         <label for="openai-api-key">OpenAI API Key: </label>
