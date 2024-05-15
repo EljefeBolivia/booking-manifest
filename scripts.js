@@ -27,11 +27,11 @@ const generateManifest = async () => {
 
   if (fareharborManifestFile) {
     console.log("converting FareHarbor manifest from PDF to PNG in base64");
-    const fareharborManifestImage = await convertPDFToImage(
+    const fareharborManifestImages = await convertPDFToImages(
       fareharborManifestFile
     );
 
-    await readImageWithGPT(fareharborManifestImage, apiKey);
+    await readImagesWithGPT(fareharborManifestImages, apiKey);
 
     // if input manifest as PNG:
     //
@@ -44,21 +44,34 @@ const generateManifest = async () => {
   }
 };
 
-const convertPDFToImage = async (pdfFile) => {
+const convertPDFToImages = async (pdfFile) => {
   const pdfURL = URL.createObjectURL(pdfFile);
 
   const loadingTask = pdfjsLib.getDocument(pdfURL);
-  const loadedPDF = await loadingTask.promise;
+  const pdf = await loadingTask.promise;
 
-  const firstPage = await loadedPDF.getPage(1);
-  var pdfViewport = firstPage.getViewport({ scale: 1 });
+  const pdfImages = [];
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; ++pageNumber) {
+    const page = await pdf.getPage(pageNumber);
+    const base64Image = await convertPDFPageToBase64(page);
+
+    pdfImages.push(base64Image);
+  }
+
+  return pdfImages;
+};
+
+const convertPDFPageToBase64 = async (page) => {
+  var pdfViewport = page.getViewport({ scale: 1 });
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
+
   canvas.height = pdfViewport.height;
   canvas.width = pdfViewport.width;
 
-  const task = firstPage.render({
+  const task = page.render({
     canvasContext: context,
     viewport: pdfViewport,
   });
@@ -67,9 +80,9 @@ const convertPDFToImage = async (pdfFile) => {
   return canvas.toDataURL();
 };
 
-const readImageWithGPT = async (base64Image, apiKey) => {
+const readImagesWithGPT = async (base64Images, apiKey) => {
   showLoader();
-  const payloadForGPT = createPayloadForGPT(base64Image);
+  const payloadForGPT = createPayloadForGPT(base64Images);
 
   sendRequestToGPT(apiKey, payloadForGPT)
     .then(extractBookingInformation)
@@ -82,7 +95,7 @@ const readImageWithGPT = async (base64Image, apiKey) => {
 };
 
 const handleError = (error) => {
-  alert("Uh-oh something went wrong :(");
+  alert("Uh-oh, something went wrong :(");
   console.error("error: " + error.message);
 };
 
@@ -93,7 +106,9 @@ const createHeadersForGPT = (apiKey) => {
   };
 };
 
-const createPayloadForGPT = (base64Image) => {
+const createPayloadForGPT = (base64Images) => {
+  const imageMessages = base64Images.map(createImageMessage);
+
   return {
     model: "gpt-4o",
     messages: [
@@ -104,12 +119,7 @@ const createPayloadForGPT = (base64Image) => {
             type: "text",
             text: getPrompt(),
           },
-          {
-            type: "image_url",
-            image_url: {
-              url: base64Image,
-            },
-          },
+          ...imageMessages,
         ],
       },
     ],
@@ -117,13 +127,22 @@ const createPayloadForGPT = (base64Image) => {
   };
 };
 
+const createImageMessage = (image) => {
+  return {
+    type: "image_url",
+    image_url: {
+      url: image,
+    },
+  };
+};
+
 const getPrompt = () => {
   return `
-    The given image is a booking manifest, with relevant information on the left half of the manifest.
+    The given image is a booking manifest which may span multiple pages, with relevant information on the left half of the manifest.
 
     Based on the relevant information in the booking manifest, reply with only a JSON object in the format below. All field values must be strings unless specified otherwise. Use the exact same keys. The values shown in the format contain some description on how to structure them. If a field value is not present in the manifest, use an appropriate empty value (e.g. blank string for string, 0 for integer, false for boolean).
 
-    Note that the contact person listed on the top left-hand side may be listed as one of the customers below. Do not create two customers object since they are the same person. Try to ensure that the number of customers that you output is equal to the number of people listed at the top.
+    Note that the contact person listed on the top left-hand side of the first page may also be listed as one of the customers below. Do not create two customers object since they are the same person. Try to ensure that the number of customers that you output is equal to the number of people listed at the top.
 
     Do not add newline characters, the text "json", or any other unnecessary information. Your reply must be parsable by JavaScript's JSON.parse().
 
@@ -136,6 +155,7 @@ const getPrompt = () => {
       "is_at_field_of_dreams": boolean,
       "total_amount_paid": float,
       "number_of_people" integer,
+      "is_troop_carrier": boolean,
       "customers": [
         {
           "name": "customer Firstname LastName",
@@ -201,12 +221,11 @@ const delay = (milliseconds) => {
 };
 
 const printManifest = async (booking) => {
-  console.log("filling out manifest template with booking information");
-
   const printWindow = window.open("");
   const isShuttle = booking["is_shuttle"];
   const manifestTemplate = await getManifestTemplate(isShuttle);
 
+  console.log("filling out manifest template with booking information");
   printWindow.document.write(manifestTemplate);
   printWindow.document.title = "gravity_nelson-booking" + booking["booking_id"];
 
@@ -226,6 +245,8 @@ const printManifest = async (booking) => {
   );
 
   if (isShuttle) {
+    appendTextInElement(printWindow, "vehicle", getBookedVehicle(booking));
+
     appendTextInElement(
       printWindow,
       "full-or-half-day",
@@ -264,6 +285,20 @@ const getManifestTemplate = async (isShuttle) => {
 const appendTextInElement = (printWindow, elementId, text) => {
   const element = printWindow.document.getElementById(elementId);
   element.innerText = element.innerText + " " + text;
+};
+
+const getBookedVehicle = (booking) => {
+  if (booking["is_4x4_hiace_mini_van"]) {
+    return "4x4 Hiace Mini Van";
+  } else if (booking["is_ford_ranger"]) {
+    return "Ford Ranger";
+  } else if (booking["is_holden_colorado"]) {
+    return "Holden Colorado";
+  } else if (booking["is_troop_carrier"]) {
+    return "Troopie";
+  } else {
+    return "";
+  }
 };
 
 const fillOutCustomerInformation = (printWindow, customers) => {
