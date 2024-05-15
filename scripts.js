@@ -123,7 +123,7 @@ const getPrompt = () => {
 
     Based on the relevant information in the booking manifest, reply with only a JSON object in the format below. All field values must be strings unless specified otherwise. Use the exact same keys. The values shown in the format contain some description on how to structure them. If a field value is not present in the manifest, use an appropriate empty value (e.g. blank string for string, 0 for integer, false for boolean).
 
-    Note that the contact person listed on the top left-hand side may be listed as one of the customers below. Do not create two customers object since they are the same person.
+    Note that the contact person listed on the top left-hand side may be listed as one of the customers below. Do not create two customers object since they are the same person. Try to ensure that the number of customers that you output is equal to the number of people listed at the top.
 
     Do not add newline characters, the text "json", or any other unnecessary information. Your reply must be parsable by JavaScript's JSON.parse().
 
@@ -132,15 +132,17 @@ const getPrompt = () => {
       "booking_id": "# and some digits"
       "is_shuttle": boolean (true if "Half/Full Day Shuttle" is mentioned),
       "booking_date": "dd/MM/yyyy",
-      "booking_time: "HH am - HH pm",
+      "booking_time: "HHam - HHpm",
       "is_at_field_of_dreams": boolean,
+      "total_amount_paid": float,
+      "number_of_people" integer,
       "customers": [
         {
           "name": "customer Firstname LastName",
-          "phone": "variable number of digits listed on the top left-hand side, near contact person name and email",
-          "email": "customer_email@domain.com",
-          "is_nelson_mtb_club_member": boolean,
-          "paid": boolean,
+          "phone": "variable number of digits listed on the top left-hand side, near contact person name and email address, most likely in New Zealand phone number format",
+          "email": "customer_email@domain.com listed on the top left-hand side, near contact person name and phone number; may appear near waiver-signed field if present",
+          "membership_number": "most likely a 5-digit number",
+          "amount_paid": "show with $ sign, to two decimal places (i.e. dollars and cents; any discount would have already been applied, so do not perform any calculation and just show the value as is",
           "is_waiver_signed": boolean
         }
       ],
@@ -220,7 +222,7 @@ const printManifest = async (booking) => {
   appendTextInElement(
     printWindow,
     "number-of-people",
-    booking.customers.length
+    booking["number_of_people"]
   );
 
   if (isShuttle) {
@@ -308,17 +310,17 @@ const createCustomerRow = (customer) => {
     <div
       class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
     >
-    ${customer["is_nelson_mtb_club_member"] ? "yes" : "no"}
+    ${customer["membership_number"]}
     </div>
     <div
       class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
     >
-    ${customer.paid ? "yes" : "no"}
+    ${customer["amount_paid"]}
     </div>
     <div
       class="manifest-cell manifest-field center-text ten-percent-width border-top border-left border-right"
     >
-    ${customer["is_waiver_signed"] ? "yes" : "no"}
+    ${customer["is_waiver_signed"] ? "signed in FareHarbor" : ""}
     </div>
   </div>
   `;
