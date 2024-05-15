@@ -71,16 +71,19 @@ const readImageWithGPT = async (base64Image, apiKey) => {
   showLoader();
   const payloadForGPT = createPayloadForGPT(base64Image);
 
-  const response = await sendRequestToGPT(apiKey, payloadForGPT);
-  const booking = extractBookingInformation(response);
+  sendRequestToGPT(apiKey, payloadForGPT)
+    .then(extractBookingInformation)
+    .then(printManifest)
+    .catch(handleError)
+    .finally(() => {
+      hideLoader();
+      console.log("done reading image with GPT");
+    });
+};
 
-  const printWindow = await fillOutManifestForPrint(booking);
-
-  printWindow.print();
-  printWindow.close();
-
-  hideLoader();
-  console.log("done reading image with GPT");
+const handleError = (error) => {
+  alert("Uh-oh something went wrong :(");
+  console.error("error: " + error.message);
 };
 
 const createHeadersForGPT = (apiKey) => {
@@ -126,6 +129,7 @@ const getPrompt = () => {
 
     <start of format>
     {
+      "booking_id": "# and some digits"
       "is_shuttle": boolean (true if "Half/Full Day Shuttle" is mentioned),
       "booking_date": "dd/MM/yyyy",
       "booking_time: "HH am - HH pm",
@@ -190,14 +194,15 @@ const delay = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
-const fillOutManifestForPrint = async (booking) => {
-  const isShuttle = booking["is_shuttle"];
+const printManifest = async (booking) => {
   console.log("filling out manifest template with booking information");
 
+  const printWindow = window.open("");
+  const isShuttle = booking["is_shuttle"];
   const manifestTemplate = await getManifestTemplate(isShuttle);
 
-  const printWindow = window.open("");
   printWindow.document.write(manifestTemplate);
+  printWindow.document.title = "gravity_nelson-booking" + booking["booking_id"];
 
   appendTextInElement(printWindow, "date", booking["booking_date"]);
   appendTextInElement(printWindow, "time", booking["booking_time"]);
@@ -237,7 +242,9 @@ const fillOutManifestForPrint = async (booking) => {
   }
 
   await delay(50);
-  return printWindow;
+
+  printWindow.print();
+  printWindow.close();
 };
 
 const getManifestTemplate = async (isShuttle) => {
