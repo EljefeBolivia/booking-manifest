@@ -73,6 +73,7 @@ const readImageWithGPT = async (base64Image, apiKey) => {
 
   const response = await sendRequestToGPT(apiKey, payloadForGPT);
   const booking = extractBookingInformation(response);
+
   const printWindow = await fillOutManifestForPrint(booking);
 
   printWindow.print();
@@ -103,13 +104,13 @@ const createPayloadForGPT = (base64Image) => {
           {
             type: "image_url",
             image_url: {
-              url: base64Image, // TODO: handle PDF
+              url: base64Image,
             },
           },
         ],
       },
     ],
-    max_tokens: 300,
+    max_tokens: 1000,
   };
 };
 
@@ -117,19 +118,22 @@ const getPrompt = () => {
   return `
     The given image is a booking manifest, with relevant information on the left half of the manifest.
 
-    Based on the relevant information in the booking manifest, reply with only a JSON object in the format below. All field values must be strings unless specified otherwise. Use the exact same keys. The values shown in the format contain some description on how to structure them.
+    Based on the relevant information in the booking manifest, reply with only a JSON object in the format below. All field values must be strings unless specified otherwise. Use the exact same keys. The values shown in the format contain some description on how to structure them. If a field value is not present in the manifest, use an appropriate empty value (e.g. blank string for string, 0 for integer, false for boolean).
 
-    Do not add newline characters, the text "json", or any other unnecessary information. Your reply must be parsable by JavaScript's JSON.parse()
+    Note that the contact person listed on the top left-hand side may be listed as one of the customers below. Do not create two customers object since they are the same person.
+
+    Do not add newline characters, the text "json", or any other unnecessary information. Your reply must be parsable by JavaScript's JSON.parse().
 
     <start of format>
     {
+      "is_shuttle": boolean (true if "Half/Full Day Shuttle" is mentioned),
       "booking_date": "dd/MM/yyyy",
-      "booking_time: "HH (am) - HH (pm)",
+      "booking_time: "HH am - HH pm",
       "is_at_field_of_dreams": boolean,
       "customers": [
         {
           "name": "customer Firstname LastName",
-          "phone": "variable number of digits listed on the top left-hand side, near name and email",
+          "phone": "variable number of digits listed on the top left-hand side, near contact person name and email",
           "email": "customer_email@domain.com",
           "is_nelson_mtb_club_member": boolean,
           "paid": boolean,
@@ -137,9 +141,9 @@ const getPrompt = () => {
         }
       ],
       "is_private_session": boolean,
-      "number_of_people": integer,
       "topic_preference": "refer to Topic Preference",
-      "need_to_rent_bike": boolean
+      "need_to_rent_bike": boolean,
+      "is_full_day": boolean
     }
     <end of format>
   `;
@@ -186,53 +190,62 @@ const delay = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
-const getManifestTemplate = async () => {
-  console.log("retrieving manifest template");
-  return await fetch("template_coaching.html").then((response) =>
-    response.text()
-  );
-};
-
 const fillOutManifestForPrint = async (booking) => {
+  const isShuttle = booking["is_shuttle"];
   console.log("filling out manifest template with booking information");
-  const manifestTemplate = await getManifestTemplate();
+
+  const manifestTemplate = await getManifestTemplate(isShuttle);
 
   const printWindow = window.open("");
   printWindow.document.write(manifestTemplate);
 
   appendTextInElement(printWindow, "date", booking["booking_date"]);
-  appendTextInElement(
-    printWindow,
-    "location",
-    booking["is_at_field_of_dreams"] ? "Field of Dreams" : ""
-  );
   appendTextInElement(printWindow, "time", booking["booking_time"]);
 
-  // appendTextInElement(printWindow, "meeting-point", booking["meeting_point"]);
-  // appendTextInElement(printWindow, "coach", booking.coach);
+  const location = booking["is_at_field_of_dreams"] ? "Field of Dreams" : "";
+  appendTextInElement(printWindow, "location", location);
+  appendTextInElement(printWindow, "meeting-point", location);
 
   fillOutCustomerInformation(printWindow, booking.customers);
 
   appendTextInElement(
     printWindow,
     "number-of-people",
-    booking["number_of_people"]
+    booking.customers.length
   );
-  appendTextInElement(printWindow, "topic", booking["topic_preference"]);
 
-  appendTextInElement(
-    printWindow,
-    "public-or-private",
-    booking["is_private_session"] ? "private" : "public"
-  );
-  appendTextInElement(
-    printWindow,
-    "rental-bike",
-    booking["need_to_rent_bike"] ? "yes" : "no"
-  );
+  if (isShuttle) {
+    appendTextInElement(
+      printWindow,
+      "full-or-half-day",
+      booking["is_full_day"] ? "full day" : "half day"
+    );
+  } else {
+    appendTextInElement(printWindow, "topic", booking["topic_preference"]);
+
+    appendTextInElement(
+      printWindow,
+      "rental-bike",
+      booking["need_to_rent_bike"] ? "yes" : "no"
+    );
+
+    appendTextInElement(
+      printWindow,
+      "public-or-private",
+      booking["is_private_session"] ? "private" : "public"
+    );
+  }
 
   await delay(50);
   return printWindow;
+};
+
+const getManifestTemplate = async (isShuttle) => {
+  console.log("retrieving manifest template");
+  const templateFileName = isShuttle
+    ? "template_shuttle.html"
+    : "template_coaching.html";
+  return await fetch(templateFileName).then((response) => response.text());
 };
 
 const appendTextInElement = (printWindow, elementId, text) => {
@@ -289,12 +302,12 @@ const createCustomerRow = (customer) => {
     <div
       class="manifest-cell manifest-field center-text ten-percent-width border-top border-left"
     >
-    ${customer.paid}
+    ${customer.paid ? "yes" : "no"}
     </div>
     <div
       class="manifest-cell manifest-field center-text ten-percent-width border-top border-left border-right"
     >
-    ${customer["is_waiver_signed"]}
+    ${customer["is_waiver_signed"] ? "yes" : "no"}
     </div>
   </div>
   `;
