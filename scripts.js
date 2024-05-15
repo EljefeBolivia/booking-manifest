@@ -155,7 +155,12 @@ const getPrompt = () => {
       "is_at_field_of_dreams": boolean,
       "total_amount_paid": float,
       "number_of_people" integer,
-      "is_troop_carrier": boolean,
+      "vehicle": {
+        "is_4x4_hiace_mini_van": boolean,
+        "is_ford_ranger": boolean,
+        "is_holden_colorado": boolean,
+        "is_troop_carrier": boolean
+      },
       "customers": [
         {
           "name": "customer Firstname LastName",
@@ -245,7 +250,11 @@ const printManifest = async (booking) => {
   );
 
   if (isShuttle) {
-    appendTextInElement(printWindow, "vehicle", getBookedVehicle(booking));
+    appendTextInElement(
+      printWindow,
+      "vehicle",
+      getBookedVehicle(booking.vehicle)
+    );
 
     appendTextInElement(
       printWindow,
@@ -287,14 +296,14 @@ const appendTextInElement = (printWindow, elementId, text) => {
   element.innerText = element.innerText + " " + text;
 };
 
-const getBookedVehicle = (booking) => {
-  if (booking["is_4x4_hiace_mini_van"]) {
-    return "4x4 Hiace Mini Van";
-  } else if (booking["is_ford_ranger"]) {
-    return "Ford Ranger";
-  } else if (booking["is_holden_colorado"]) {
-    return "Holden Colorado";
-  } else if (booking["is_troop_carrier"]) {
+const getBookedVehicle = (vehicle) => {
+  if (vehicle["is_4x4_hiace_mini_van"]) {
+    return "Hiace Minivan";
+  } else if (vehicle["is_ford_ranger"]) {
+    return "Ranger";
+  } else if (vehicle["is_holden_colorado"]) {
+    return "Colorado";
+  } else if (vehicle["is_troop_carrier"]) {
     return "Troopie";
   } else {
     return "";
