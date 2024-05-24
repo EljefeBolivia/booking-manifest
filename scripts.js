@@ -95,7 +95,9 @@ const readImagesWithGPT = async (base64Images, apiKey) => {
 };
 
 const handleError = (error) => {
-  alert("Uh-oh, something went wrong :(");
+  alert(
+    "Uh-oh, something went wrong :(\nCheck that you have sufficient credits in your OpenAI API account and that the pop-up blocker are disabled for this site."
+  );
   console.error("error: " + error.message);
 };
 
